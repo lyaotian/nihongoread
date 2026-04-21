@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { Input, Button, Card, Typography, Space, message } from 'antd';
-import { BookOpen, Send } from 'lucide-react';
+import { Input, Button, Card, Typography, Space, message, Slider } from 'antd';
+import { BookOpen, Send, GraduationCap } from 'lucide-react';
 import { motion } from 'motion/react';
+import { JLPTLevel } from '../types';
 
 const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 
 interface Props {
-  onGenerate: (article: string) => Promise<void>;
+  onGenerate: (article: string, level: JLPTLevel) => Promise<void>;
   loading: boolean;
 }
 
 export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
   const [text, setText] = useState('');
+  const [levelValue, setLevelValue] = useState(1);
+
+  const levelMap: Record<number, JLPTLevel> = {
+    1: 'N3',
+    2: 'N2',
+    3: 'N1'
+  };
 
   const handleSubmit = () => {
     if (!text.trim()) {
@@ -23,7 +31,7 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
       message.warning('文章が短すぎます。もう少し長い文章を入力してください（目安：50文字以上）。');
       return;
     }
-    onGenerate(text);
+    onGenerate(text, levelMap[levelValue]);
   };
 
   return (
@@ -50,7 +58,36 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
             className="!rounded-[4px] !border-[#f0f0f0] !text-[14px] md:!text-[16px] !p-3 md:!p-4 hover:!border-[#1890ff] focus:!border-[#1890ff] focus:!shadow-none"
             disabled={loading}
           />
-
+          <div className="px-2 py-4">
+            <div className="flex items-center gap-2 mb-6 text-[#262626] font-medium">
+              <GraduationCap size={18} className="text-[#1890ff]" />
+              <span>レベル設定</span>
+            </div>
+            <Slider
+              min={1}
+              max={3}
+              step={1}
+              value={levelValue}
+              onChange={setLevelValue}
+              tooltip={{ open: false }}
+              marks={{
+                3: {
+                  style: { color: levelValue === 3 ? '#1890ff' : '#8c8c8c', fontWeight: levelValue === 1 ? '600' : '400' },
+                  label: 'N1'
+                },
+                2: {
+                  style: { color: levelValue === 2 ? '#1890ff' : '#8c8c8c', fontWeight: levelValue === 2 ? '600' : '400' },
+                  label: 'N2'
+                },
+                1: {
+                  style: { color: levelValue === 1 ? '#1890ff' : '#8c8c8c', fontWeight: levelValue === 1 ? '600' : '400' },
+                  label: 'N3'
+                }
+              }}
+              className="mt-2 mb-8 mx-4"
+              disabled={loading}
+            />
+          </div>
           <div className="flex justify-center pt-2 md:pt-4">
             <Button
               type="primary"

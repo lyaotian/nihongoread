@@ -12,7 +12,7 @@ import { Results } from './components/Results';
 import { History } from './components/History';
 import { generateQuiz } from './services/geminiService';
 import { dbService } from './services/dbService';
-import { AppState, QuizData, UserAnswer, QuizHistoryItem } from './types';
+import { AppState, QuizData, UserAnswer, QuizHistoryItem, JLPTLevel } from './types';
 import { Languages, History as HistoryIcon } from 'lucide-react';
 
 const { Header, Content, Footer } = Layout;
@@ -24,10 +24,10 @@ export default function App() {
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
 
-  const handleGenerate = async (article: string) => {
+  const handleGenerate = async (article: string, level: JLPTLevel) => {
     setLoading(true);
     try {
-      const data = await generateQuiz(article);
+      const data = await generateQuiz(article, level);
       setQuizData(data);
       setState('quiz');
       message.success('問題が作成されました！頑張りましょう。');
@@ -51,6 +51,7 @@ export default function App() {
           timestamp: Date.now(),
           article: quizData.article,
           questions: quizData.questions,
+          level: quizData.level,
           answers: userAnswers,
           score: correctCount,
           total: userAnswers.length
@@ -64,7 +65,8 @@ export default function App() {
   const handleHistoryViewDetails = (item: QuizHistoryItem) => {
     setQuizData({
       article: item.article,
-      questions: item.questions
+      questions: item.questions,
+      level: item.level,
     });
     setAnswers(item.answers);
     setState('results');

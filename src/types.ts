@@ -9,6 +9,7 @@ export interface Question {
 export interface QuizData {
   article: string;
   questions: Question[];
+  level: JLPTLevel;
 }
 
 export interface UserAnswer {
@@ -17,6 +18,8 @@ export interface UserAnswer {
   isCorrect: boolean;
 }
 
+export type JLPTLevel = 'N1' | 'N2' | 'N3';
+
 export type AppState = 'input' | 'quiz' | 'results' | 'history';
 
 export interface QuizHistoryItem {
@@ -24,6 +27,7 @@ export interface QuizHistoryItem {
   timestamp: number;
   article: string;
   questions: Question[];
+  level: JLPTLevel;
   answers: UserAnswer[];
   score: number;
   total: number;

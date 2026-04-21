@@ -53,7 +53,7 @@ export const Results: React.FC<Props> = ({ answers, data, onRestart }) => {
         <Space orientation="vertical" size="large" className="w-full text-center">
           <div>
             <div className="flex justify-center mb-3">
-              <Tag color="orange" className="!text-[12px] !py-1 !px-4 !rounded-full !border-none !bg-orange-50 !text-orange-600 font-bold uppercase tracking-widest shadow-sm">JLPT N1 レベル</Tag>
+              <Tag color="orange" className="!text-[12px] !py-1 !px-4 !rounded-full !border-none !bg-orange-50 !text-orange-600 font-bold uppercase tracking-widest shadow-sm">JLPT {data.level} レベル</Tag>
             </div>
             <Title level={3} className="md:!text-3xl !font-bold !text-[#262626] !mb-1">結果確認</Title>
             <Text className="text-[#8c8c8c] text-sm md:text-base">{getPerformanceMessage()}</Text>

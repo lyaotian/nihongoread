@@ -1,18 +1,28 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { QuizData, Question } from "../types";
+import { QuizData, Question, JLPTLevel } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-export async function generateQuiz(article: string): Promise<QuizData> {
+export async function generateQuiz(article: string, level: JLPTLevel): Promise<QuizData> {
   const prompt = `
-    Analyze the following Japanese article and generate 5 high-difficulty multiple-choice reading comprehension questions in Japanese, strictly adhering to JLPT N1 standards.
+    Analyze the following Japanese article and generate 5 multiple-choice reading comprehension questions in Japanese, strictly adhering to JLPT ${level} standards.
     
-    Difficulty Requirements:
-    - Questions should focus on nuanced interpretation, logical structure, and the author's underlying intent/tone.
-    - Use JLPT N1 level vocabulary and grammar in both the questions and options.
-    - Options should be plausible and require deep comprehension to differentiate; avoid obviously incorrect answers.
+    Difficulty Requirements (JLPT ${level}):
+    ${level === 'N1' ? `
+    - Focus on nuanced interpretation, logical structure, and the author's underlying intent/tone.
+    - Use N1 level vocabulary and complex grammar.
+    - Options should be highly plausible and require deep comprehension to differentiate.
+    ` : level === 'N2' ? `
+    - Focus on main ideas, detailed facts, and logical relationships between sentences.
+    - Use N2 level vocabulary and common formal grammar.
+    - Options should be plausible and require clear understanding of the text.
+    ` : `
+    - Focus on basic comprehension, identifying facts, and simple inferences.
+    - Use N3 level vocabulary and standard everyday grammar.
+    - Options should be straightforward but require reading the relevant parts.
+    `}
     - Each question must have 4 options and exactly one correct answer.
-    - Provide a detailed academic explanation (in Japanese) for the correct answer, referencing specific parts of the text.
+    - Provide a clear explanation (in Japanese) for the correct answer, referencing specific parts of the text.
     
     Article Context:
     ${article}
@@ -69,7 +79,8 @@ export async function generateQuiz(article: string): Promise<QuizData> {
 
     return {
       article,
-      questions
+      questions,
+      level,
     };
   } catch (error) {
     console.error("Error generating quiz:", error);

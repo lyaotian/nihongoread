@@ -89,11 +89,11 @@ export const History: React.FC<Props> = ({ onViewDetails, onBack }) => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <Space className="mb-2 flex-wrap">
-                      <Tag icon={<Calendar size={12} className="mr-1" />} borderless className="!bg-[#f5f5f5] !text-[#595959]">
+                      <Tag icon={<Calendar size={12} className="mr-1" />} bordered={false} className="!bg-[#f5f5f5] !text-[#595959]">
                         {formatDate(item.timestamp)}
                       </Tag>
-                      <Tag color="orange" borderless className="!bg-orange-50 !text-orange-600 font-bold">JLPT N1</Tag>
-                      <Tag color={item.score / item.total >= 0.8 ? 'success' : 'processing'} borderless>
+                      <Tag color="orange" bordered={false} className="!bg-orange-50 !text-orange-600 font-bold">JLPT {item.level}</Tag>
+                      <Tag color={item.score / item.total >= 0.8 ? 'success' : 'processing'} bordered={false}>
                         スコア: {item.score}/{item.total} ({Math.round(item.score/item.total*100)}%)
                       </Tag>
                     </Space>

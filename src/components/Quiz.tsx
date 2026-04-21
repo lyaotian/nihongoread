@@ -47,7 +47,7 @@ export const Quiz: React.FC<Props> = ({ data, onFinish }) => {
         className="bg-white rounded-lg p-6 md:p-8 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-auto lg:h-[calc(100vh-160px)] flex flex-col"
       >
         <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-5 pb-3 border-b border-[#f0f0f0]">本文</h1>
-        <article className="reading-body-text flex-1 overflow-y-auto pr-2 max-h-[300px] lg:max-h-none text-sm md:text-base leading-relaxed">
+        <article className="whitespace-pre-wrap reading-body-text flex-1 overflow-y-auto pr-2 max-h-[300px] lg:max-h-none text-sm md:text-base leading-relaxed">
           {data.article}
         </article>
       </motion.div>
@@ -62,7 +62,7 @@ export const Quiz: React.FC<Props> = ({ data, onFinish }) => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-3">
                 <span className="text-xs sm:text-sm text-[#8c8c8c]">質問 {currentStep + 1} / {data.questions.length}</span>
-                <Tag color="orange" className="!text-[10px] sm:!text-[11px] !leading-relaxed !rounded-sm !border-none !bg-orange-50 !text-orange-600 font-bold uppercase tracking-wider">JLPT N1</Tag>
+                <Tag color="orange" className="!text-[10px] sm:!text-[11px] !leading-relaxed !rounded-sm !border-none !bg-orange-50 !text-orange-600 font-bold uppercase tracking-wider">{"JLPT " + data.level}</Tag>
               </div>
               <span className="text-xs sm:text-sm text-[#1890ff] font-medium">進行中</span>
             </div>
