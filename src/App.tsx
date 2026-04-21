@@ -4,16 +4,16 @@
  */
 
 import React, { useState } from 'react';
-import { ConfigProvider, Layout, Typography, Spin, message, Button } from 'antd';
+import { ConfigProvider, Layout, Typography, Spin, message, Button, Modal, Input } from 'antd';
 import { AnimatePresence } from 'motion/react';
 import { ArticleInput } from './components/ArticleInput';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
 import { History } from './components/History';
-import { generateQuiz } from './services/geminiService';
+import { generateQuiz, hasApiKey, setApiKey } from './services/geminiService';
 import { dbService } from './services/dbService';
 import { AppState, QuizData, UserAnswer, QuizHistoryItem, JLPTLevel } from './types';
-import { Languages, History as HistoryIcon } from 'lucide-react';
+import { Languages, History as HistoryIcon, Settings as SettingsIcon } from 'lucide-react';
 
 const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
@@ -23,8 +23,17 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
+  const [apiKeyModalVisible, setApiKeyModalVisible] = useState(false);
+  const [tempApiKey, setTempApiKey] = useState('');
+  const [pendingQuizParams, setPendingQuizParams] = useState<{article: string, level: JLPTLevel} | null>(null);
 
   const handleGenerate = async (article: string, level: JLPTLevel) => {
+    if (!hasApiKey()) {
+      setPendingQuizParams({ article, level });
+      setApiKeyModalVisible(true);
+      return;
+    }
+
     setLoading(true);
     try {
       const data = await generateQuiz(article, level);
@@ -36,6 +45,22 @@ export default function App() {
       message.error(error instanceof Error ? error.message : '予期せぬエラーが発生しました。');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveApiKey = async () => {
+    if (!tempApiKey.trim()) {
+      message.error("APIキーを入力してください。");
+      return;
+    }
+    setApiKey(tempApiKey.trim());
+    setApiKeyModalVisible(false);
+    setTempApiKey('');
+    message.success("APIキーを保存しました。");
+    
+    if (pendingQuizParams) {
+      handleGenerate(pendingQuizParams.article, pendingQuizParams.level);
+      setPendingQuizParams(null);
     }
   };
 
@@ -121,6 +146,20 @@ export default function App() {
             >
               <span className="hidden sm:inline ml-1">学習履歴</span>
             </Button>
+            <Button 
+              type="text" 
+              icon={<SettingsIcon size={18} />} 
+              onClick={() => {
+                setApiKeyModalVisible(true);
+                const oldKey = localStorage.getItem('GEMINI_API_KEY');
+                if (oldKey) {
+                  setTempApiKey(oldKey);
+                }
+              }}
+              className="!text-[#8c8c8c] hover:!text-[#1890ff]"
+            >
+              <span className="hidden sm:inline ml-1">設定</span>
+            </Button>
           </div>
         </Header>
 
@@ -170,6 +209,31 @@ export default function App() {
             </div>
           </div>
         )}
+
+        <Modal
+          title="Gemini APIキーの設定"
+          open={apiKeyModalVisible}
+          onOk={handleSaveApiKey}
+          onCancel={() => {
+            setApiKeyModalVisible(false);
+            setTempApiKey('');
+            setPendingQuizParams(null);
+          }}
+          okText="保存して続ける"
+          cancelText="キャンセル"
+          maskClosable={false}
+        >
+          <p className="mb-4 text-gray-600">
+            AIモデルを利用して問題を生成するために、Google GeminiのAPIキーが必要です。<br />
+            APIキーはブラウザのローカルストレージにのみ保存され、サーバーには送信されません。
+          </p>
+          <Input.Password
+            placeholder="AIzaSy..."
+            value={tempApiKey}
+            onChange={(e) => setTempApiKey(e.target.value)}
+            onPressEnter={handleSaveApiKey}
+          />
+        </Modal>
       </Layout>
     </ConfigProvider>
   );

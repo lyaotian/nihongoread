@@ -1,9 +1,28 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { QuizData, Question, JLPTLevel } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+
+// Initialize with environment variable or localStorage
+const envKey = (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) ? process.env.GEMINI_API_KEY : undefined;
+const storedKey = localStorage.getItem('GEMINI_API_KEY');
+
+const initialKey = envKey || storedKey;
+if (initialKey) {
+  ai = new GoogleGenAI({ apiKey: initialKey });
+}
+
+export const hasApiKey = () => ai !== null;
+
+export const setApiKey = (key: string) => {
+  localStorage.setItem('GEMINI_API_KEY', key);
+  ai = new GoogleGenAI({ apiKey: key });
+};
 
 export async function generateQuiz(article: string, level: JLPTLevel): Promise<QuizData> {
+  if (!ai) {
+    throw new Error("API_KEY_REQUIRED");
+  }
   const prompt = `
     Analyze the following Japanese article and generate 5 multiple-choice reading comprehension questions in Japanese, strictly adhering to JLPT ${level} standards.
     
