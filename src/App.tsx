@@ -25,18 +25,18 @@ export default function App() {
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
   const [apiKeyModalVisible, setApiKeyModalVisible] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
-  const [pendingQuizParams, setPendingQuizParams] = useState<{article: string, level: JLPTLevel} | null>(null);
+  const [pendingQuizParams, setPendingQuizParams] = useState<{article: string, level: JLPTLevel, modelName: string} | null>(null);
 
-  const handleGenerate = async (article: string, level: JLPTLevel) => {
+  const handleGenerate = async (article: string, level: JLPTLevel, modelName: string) => {
     if (!hasApiKey()) {
-      setPendingQuizParams({ article, level });
+      setPendingQuizParams({ article, level, modelName });
       setApiKeyModalVisible(true);
       return;
     }
 
     setLoading(true);
     try {
-      const data = await generateQuiz(article, level);
+      const data = await generateQuiz(article, level, modelName);
       setQuizData(data);
       setState('quiz');
       message.success('問題が作成されました！頑張りましょう。');
@@ -59,7 +59,7 @@ export default function App() {
     message.success("APIキーを保存しました。");
     
     if (pendingQuizParams) {
-      handleGenerate(pendingQuizParams.article, pendingQuizParams.level);
+      handleGenerate(pendingQuizParams.article, pendingQuizParams.level, pendingQuizParams.modelName);
       setPendingQuizParams(null);
     }
   };

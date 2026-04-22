@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Button, Card, Typography, Space, message, Slider } from 'antd';
-import { BookOpen, Send, GraduationCap } from 'lucide-react';
+import { Input, Button, Card, Typography, Space, message, Slider, Select } from 'antd';
+import { BookOpen, Send, GraduationCap, Cpu } from 'lucide-react';
 import { motion } from 'motion/react';
 import { JLPTLevel } from '../types';
 
@@ -8,7 +8,7 @@ const { TextArea } = Input;
 const { Title, Paragraph } = Typography;
 
 interface Props {
-  onGenerate: (article: string, level: JLPTLevel) => Promise<void>;
+  onGenerate: (article: string, level: JLPTLevel, modelName: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -18,10 +18,18 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
     const saved = localStorage.getItem('jlptLevelValue');
     return saved ? parseInt(saved, 10) : 1;
   });
+  const [modelName, setModelName] = useState(() => {
+    return localStorage.getItem('geminiModelName') || 'gemini-3-flash-preview';
+  });
 
   const handleLevelChange = (value: number) => {
     setLevelValue(value);
     localStorage.setItem('jlptLevelValue', value.toString());
+  };
+
+  const handleModelChange = (value: string) => {
+    setModelName(value);
+    localStorage.setItem('geminiModelName', value);
   };
 
   const levelMap: Record<number, JLPTLevel> = {
@@ -39,7 +47,7 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
       message.warning('文章が短すぎます。もう少し長い文章を入力してください（目安：50文字以上）。');
       return;
     }
-    onGenerate(text, levelMap[levelValue]);
+    onGenerate(text, levelMap[levelValue], modelName);
   };
 
   return (
@@ -95,6 +103,31 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
               className="mt-2 mb-8 mx-4"
               disabled={loading}
             />
+
+            <div className="flex items-center gap-2 mt-8 mb-4 text-[#262626] font-medium">
+              <Cpu size={18} className="text-[#1890ff]" />
+              <span>モデル選択</span>
+            </div>
+            <div className="mx-4">
+              <Select
+                value={modelName}
+                onChange={handleModelChange}
+                options={[
+                  { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash Preview' },
+                  { value: 'gemini-3-pro-preview', label: 'Gemini 3 Pro Preview' },
+                  { value: 'gemini-3-pro', label: 'Gemini 3 Pro' },
+                  { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+                  { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+                  { value: 'gemini-flash-latest', label: 'Gemini Flash Latest' },
+                  { value: 'gemini-flash-exp', label: 'Gemini Flash Experimental' },
+                  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
+                  { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+                ]}
+                className="w-full"
+                disabled={loading}
+                size="large"
+              />
+            </div>
           </div>
           <div className="flex justify-center pt-2 md:pt-4">
             <Button

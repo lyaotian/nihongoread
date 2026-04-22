@@ -19,7 +19,7 @@ export const setApiKey = (key: string) => {
   ai = new GoogleGenAI({ apiKey: key });
 };
 
-export async function generateQuiz(article: string, level: JLPTLevel): Promise<QuizData> {
+export async function generateQuiz(article: string, level: JLPTLevel, modelName: string = "gemini-3-flash-preview"): Promise<QuizData> {
   if (!ai) {
     throw new Error("API_KEY_REQUIRED");
   }
@@ -49,7 +49,7 @@ export async function generateQuiz(article: string, level: JLPTLevel): Promise<Q
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: modelName,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
