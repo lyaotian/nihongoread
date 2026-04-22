@@ -118,7 +118,6 @@ export default function App() {
           <div className="flex items-center gap-2 cursor-pointer" onClick={handleRestart}>
             <div className="text-[#1890ff] font-bold text-xl flex items-center gap-2">
               <span className="text-2xl">読</span>
-              <span>ReadWise JP</span>
             </div>
           </div>
           

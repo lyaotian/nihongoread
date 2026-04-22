@@ -14,7 +14,15 @@ interface Props {
 
 export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
   const [text, setText] = useState('');
-  const [levelValue, setLevelValue] = useState(1);
+  const [levelValue, setLevelValue] = useState(() => {
+    const saved = localStorage.getItem('jlptLevelValue');
+    return saved ? parseInt(saved, 10) : 1;
+  });
+
+  const handleLevelChange = (value: number) => {
+    setLevelValue(value);
+    localStorage.setItem('jlptLevelValue', value.toString());
+  };
 
   const levelMap: Record<number, JLPTLevel> = {
     1: 'N3',
@@ -68,7 +76,7 @@ export const ArticleInput: React.FC<Props> = ({ onGenerate, loading }) => {
               max={3}
               step={1}
               value={levelValue}
-              onChange={setLevelValue}
+              onChange={handleLevelChange}
               tooltip={{ open: false }}
               marks={{
                 3: {
