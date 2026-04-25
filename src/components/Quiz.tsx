@@ -46,7 +46,6 @@ export const Quiz: React.FC<Props> = ({ data, onFinish }) => {
         animate={{ opacity: 1, x: 0 }}
         className="bg-white rounded-lg p-6 md:p-8 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-auto lg:h-[calc(100vh-160px)] flex flex-col"
       >
-        <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-5 pb-3 border-b border-[#f0f0f0]">本文</h1>
         <article className="whitespace-pre-wrap reading-body-text flex-1 overflow-y-auto pr-2 max-h-[300px] lg:max-h-none text-sm md:text-base leading-relaxed">
           {data.article}
         </article>

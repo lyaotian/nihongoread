@@ -81,7 +81,7 @@ export const Results: React.FC<Props> = ({ answers, data, onRestart }) => {
             onClick={onRestart}
             className="w-full max-w-[240px] h-[44px] md:h-[48px] !rounded-[4px] text-base md:text-lg font-medium mx-auto"
           >
-            もう一度練習する
+            TOPページへ
           </Button>
         </Space>
       </Card>

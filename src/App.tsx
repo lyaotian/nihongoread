@@ -157,7 +157,7 @@ export default function App() {
               }}
               className="!text-[#8c8c8c] hover:!text-[#1890ff]"
             >
-              <span className="hidden sm:inline ml-1">設定</span>
+              <span className="hidden sm:inline ml-1">APIキー</span>
             </Button>
           </div>
         </Header>
